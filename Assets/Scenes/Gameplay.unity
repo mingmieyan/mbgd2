@@ -1492,9 +1492,10 @@ GameObject:
   - component: {fileID: 1813448169}
   - component: {fileID: 1813448168}
   - component: {fileID: 1813448167}
-  - component: {fileID: 1813448166}
   - component: {fileID: 1813448164}
   - component: {fileID: 1813448170}
+  - component: {fileID: 1813448171}
+  - component: {fileID: 1813448172}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1529,27 +1530,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!135 &1813448166
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1813448163}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5263355
-  m_Center: {x: 0, y: 0, z: 0.026335478}
 --- !u!23 &1813448167
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1602,7 +1582,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813448163}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &1813448169
 Transform:
   m_ObjectHideFlags: 0
@@ -1625,7 +1605,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813448163}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8648f0db6fdcc6e408126713ebd8a166, type: 3}
   m_Name: 
@@ -1637,6 +1617,48 @@ MonoBehaviour:
   minSwipeDistance: 0.25
   minScale: 0.5
   maxScale: 3
+--- !u!65 &1813448171
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1813448163}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1813448172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1813448163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9ad4d6016de66d4582e4c3e1e63cded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dodgeSpeed: 5
+  startForwardSpeed: 5
+  maxForwardSpeed: 20
+  acceleration: 0.05
+  jumpForce: 5
+  horizMovement: 1
+  laneOffset: 2
+  minSwipeDistance: 0.25
+  maxHealth: 3
 --- !u!1 &1933417988
 GameObject:
   m_ObjectHideFlags: 0
