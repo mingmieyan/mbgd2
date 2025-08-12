@@ -1,39 +1,36 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerRunner : MonoBehaviour
 {
     private Rigidbody rb;
+    private CapsuleCollider col;
 
     [Header("Movement Settings")]
-    [Tooltip("Horizontal dodge speed")]
     public float dodgeSpeed = 5;
-    [Tooltip("Initial forward speed")]
     public float startForwardSpeed = 5;
-    [Tooltip("Maximum forward speed")]
     public float maxForwardSpeed = 20;
-    [Tooltip("Forward acceleration per second")]
     public float acceleration = 0.05f;
-    [Tooltip("Jump force")]
     public float jumpForce = 5;
+    public float slideDuration = 0.5f;
+    public float slideColliderHeight = 0.5f;
 
     private float forwardSpeed;
+    private float originalColliderHeight;
+    private Vector3 originalColliderCenter;
+    private bool isSliding = false;
 
-    public enum MobileHorizMovement
-    {
-        Accelerometer,
-        ScreenTouch
-    }
-    [Tooltip("Mobile horizontal movement type")]
+    public enum MobileHorizMovement { Accelerometer, ScreenTouch }
     public MobileHorizMovement horizMovement = MobileHorizMovement.Accelerometer;
 
     [Header("Swipe Settings")]
-    public float laneOffset = 2f; // Distance between lanes
+    public float laneOffset = 2f;
     public float minSwipeDistance = 0.25f;
     private float minSwipeDistancePixels;
     private Vector2 touchStart;
 
-    private int currentLane = 0; // Middle = 0, Left = -1, Right = 1
+    private int currentLane = 0;
     private bool isGrounded = true;
 
     [Header("Health Settings")]
@@ -43,28 +40,27 @@ public class PlayerRunner : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotation; // Prevent rolling
+        col = GetComponent<CapsuleCollider>();
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+
         minSwipeDistancePixels = minSwipeDistance * Screen.dpi;
         currentHealth = maxHealth;
+        forwardSpeed = startForwardSpeed;
 
-        forwardSpeed = startForwardSpeed; // start speed
+        originalColliderHeight = col.height;
+        originalColliderCenter = col.center;
     }
 
     void Update()
     {
-        // Forward acceleration
         if (forwardSpeed < maxForwardSpeed)
-        {
             forwardSpeed += acceleration * Time.deltaTime;
-        }
 
 #if UNITY_STANDALONE || UNITY_WEBPLAYER
-        // Horizontal movement
         if (Input.GetKeyDown(KeyCode.A)) ChangeLane(-1);
         if (Input.GetKeyDown(KeyCode.D)) ChangeLane(1);
-
-        // Jump
         if (Input.GetKeyDown(KeyCode.Space)) Jump();
+        if (Input.GetKeyDown(KeyCode.S)) Slide();
 #elif UNITY_IOS || UNITY_ANDROID
         if (Input.touchCount > 0)
         {
@@ -76,43 +72,91 @@ public class PlayerRunner : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Forward movement + smooth lane switch
+        // ǰ��
         Vector3 forwardMove = Vector3.forward * forwardSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + forwardMove);
 
+        // �����ƶ�
         Vector3 targetPos = new Vector3(currentLane * laneOffset, rb.position.y, rb.position.z);
         Vector3 moveDir = targetPos - rb.position;
         rb.MovePosition(rb.position + moveDir * dodgeSpeed * Time.fixedDeltaTime);
+
+        // ��������»����ý�ɫ�����½�������
+        if (isSliding && !isGrounded)
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, -10f, rb.linearVelocity.z); // ��һ�������ٶ�
+        }
     }
 
     void ChangeLane(int direction)
     {
-        int targetLane = Mathf.Clamp(currentLane + direction, -1, 1);
-        currentLane = targetLane;
+        currentLane = Mathf.Clamp(currentLane + direction, -1, 1);
     }
 
     void Jump()
     {
-        if (isGrounded)
+        if (isGrounded && !isSliding)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void Slide()
     {
-        // Restore jump state
-        if (collision.contacts[0].normal == Vector3.up)
+        if (isSliding) return;
+        isSliding = true;
+
+        StopCoroutine(nameof(SmoothResetCollider));
+
+        // ��С��ײ��
+        col.height = slideColliderHeight;
+        col.center = new Vector3(originalColliderCenter.x, slideColliderHeight / 2f, originalColliderCenter.z);
+
+        // ��������»���ֱ�Ӹ�һ���½��ٶ�
+        if (!isGrounded)
         {
-            isGrounded = true;
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, -10f, rb.linearVelocity.z);
         }
 
-        // Hit obstacle
-        if (collision.gameObject.CompareTag("Obstacle"))
+        StartCoroutine(EndSlideAfterDelay());
+    }
+
+    IEnumerator EndSlideAfterDelay()
+    {
+        yield return new WaitForSeconds(slideDuration);
+        yield return StartCoroutine(SmoothResetCollider());
+        isSliding = false;
+    }
+
+    IEnumerator SmoothResetCollider()
+    {
+        float elapsed = 0f;
+        float duration = 0.2f;
+
+        float startHeight = col.height;
+        Vector3 startCenter = col.center;
+
+        while (elapsed < duration)
         {
-            TakeDamage(1);
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            col.height = Mathf.Lerp(startHeight, originalColliderHeight, t);
+            col.center = Vector3.Lerp(startCenter, originalColliderCenter, t);
+            yield return null;
         }
+
+        col.height = originalColliderHeight;
+        col.center = originalColliderCenter;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.contacts[0].normal == Vector3.up)
+            isGrounded = true;
+
+        if (collision.gameObject.CompareTag("Obstacle"))
+            TakeDamage(1);
     }
 
     void SwipeInput(Touch touch)
@@ -128,7 +172,6 @@ public class PlayerRunner : MonoBehaviour
 
             if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
             {
-                // Left/Right swipe
                 if (Mathf.Abs(delta.x) >= minSwipeDistancePixels)
                 {
                     if (delta.x > 0) ChangeLane(1);
@@ -137,10 +180,13 @@ public class PlayerRunner : MonoBehaviour
             }
             else
             {
-                // Up swipe = jump
                 if (delta.y > minSwipeDistancePixels && isGrounded)
                 {
                     Jump();
+                }
+                else if (delta.y < -minSwipeDistancePixels)
+                {
+                    Slide();
                 }
             }
         }
@@ -151,16 +197,17 @@ public class PlayerRunner : MonoBehaviour
         currentHealth -= damage;
         Debug.Log("Player took damage! Current Health: " + currentHealth);
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        if (currentHealth <= 0) Die();
     }
 
     void Die()
     {
         Debug.Log("Player died!");
-        // TODO: Add game over logic here
         gameObject.SetActive(false);
+    }
+
+    public bool IsSliding()
+    {
+        return isSliding;
     }
 }
