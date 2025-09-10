@@ -1,4 +1,4 @@
-using System.Drawing;
+
 using UnityEngine;
 using System.Collections.Generic; // List
 
@@ -24,7 +24,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("How many tiles to spawn with noobstacles")]
      public int initNoObstacles = 4;
 
-  
+
+    // 存放生成出来的 tile
+    private List<Transform> spawnedTiles = new List<Transform>();
     /// <summary>
     /// Where the next tile should be spawned at.
     /// </summary>
@@ -57,13 +59,17 @@ public class GameManager : MonoBehaviour
     {
         var newTile = Instantiate(tile, nextTileLocation,
         nextTileRotation);
+
+
+        // 保存到列表，方便回收
+        spawnedTiles.Add(newTile);
         // Figure out where and at what rotation we should
         // spawn the next item
         var nextTile = newTile.Find("Next Spawn Point");
         nextTileLocation = nextTile.position;
         nextTileRotation = nextTile.rotation;
 
-        if (spawnObstacles)
+        if (spawnObstacles && obstacle != null)
         {
             SpawnObstacle(newTile);
         }
@@ -101,5 +107,19 @@ public class GameManager : MonoBehaviour
             newObstacle.SetParent(spawnPoint.transform);
         }
     }
+
+      /// <summary>
+    /// 回收最早的 tile（防止场景里无限堆积）
+    /// </summary>
+    public void RecycleOldestTile()
+    {
+        if (spawnedTiles.Count > initSpawnNum) // 超过初始数量就回收
+        {
+            var oldTile = spawnedTiles[0];
+            spawnedTiles.RemoveAt(0);
+            Destroy(oldTile.gameObject);
+        }
+    }
+
 }
 

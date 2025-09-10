@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class ObstacleBehaviour : MonoBehaviour
 {
@@ -10,7 +11,13 @@ public class ObstacleBehaviour : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         PlayerRunner player = collision.gameObject.GetComponent<PlayerRunner>();
-
+        {
+            // Destroy the player
+            Destroy(collision.gameObject);
+            // Call the function ResetGame after
+            // waitTime has passed
+            StartCoroutine("ResetGame", waitTime);
+        }
         if (player != null)
         {
             // 如果是低障碍并且玩家正在滑行 => 忽略碰撞
@@ -26,15 +33,30 @@ public class ObstacleBehaviour : MonoBehaviour
                 var particles = Instantiate(explosion, transform.position, Quaternion.identity);
                 Destroy(particles, 1.0f);
             }
+            Destroy(this.gameObject);
 
-            player.SendMessage("TakeDamage", 1, SendMessageOptions.DontRequireReceiver);
-            Invoke("ResetGame", waitTime);
         }
     }
+    [Tooltip("How long to wait before restarting thegame")]
 
-    private void ResetGame()
+    
+    /// <summary>
+    /// Will restart the currently loaded level
+    /// </summary>
+    IEnumerator ResetGame(float waitTime)
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene(sceneName);
+        // Get the current level's name
+        //string sceneName =
+        //SceneManager.GetActiveScene().name;
+        // Restarts the current level
+        // SceneManager.LoadScene(sceneName);
+        yield return new WaitForSeconds(waitTime);
+        var go = GetGameOverMenu();
+        go.SetActive(true);
+    }
+    GameObject GetGameOverMenu()
+    {
+        var canvas = GameObject.Find("Canvas").transform;
+        return canvas.Find("Game Over").gameObject;
     }
 }
