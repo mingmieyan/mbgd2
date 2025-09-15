@@ -1,5 +1,8 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement; // LoadScene
+using UnityEngine.UI;
+
 public class MainMenuBehaviour : MonoBehaviour
 {
     /// <summary>
