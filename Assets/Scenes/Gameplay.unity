@@ -2013,7 +2013,7 @@ GameObject:
   - component: {fileID: 1223746741}
   - component: {fileID: 1223746740}
   m_Layer: 5
-  m_Name: Option Content
+  m_Name: VolumeContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4337,6 +4337,8 @@ MonoBehaviour:
   startPoint: {x: 0, y: 0, z: -5}
   initSpawnNum: 8
   initNoObstacles: 1
+  Score: 0
+  ScoreText: {fileID: 0}
 --- !u!1 &1973557549
 GameObject:
   m_ObjectHideFlags: 0
