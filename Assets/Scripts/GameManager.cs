@@ -1,6 +1,7 @@
 
 using UnityEngine;
-using System.Collections.Generic; // List
+using System.Collections.Generic;
+using TMPro; // List
 
 
 /// <summary>
@@ -35,6 +36,10 @@ public class GameManager : MonoBehaviour
     /// How should the next tile be rotated?
     /// </summary>
     private Quaternion nextTileRotation;
+
+    public int Score;
+    public TMP_Text ScoreText;
+
     /// <summary>
     /// Start is called before the first frame update
     /// </summary>
@@ -121,5 +126,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void AddScore(int score)
+    {
+        Score += score;
+        ScoreText.text = Score.ToString();
+        PlayerPrefs.SetInt("Score", Score);
+    }
 }
 
