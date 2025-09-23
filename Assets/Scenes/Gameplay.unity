@@ -3169,7 +3169,7 @@ GameObject:
   - component: {fileID: 1223746741}
   - component: {fileID: 1223746740}
   m_Layer: 5
-  m_Name: Option Content
+  m_Name: VolumeContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

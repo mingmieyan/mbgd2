@@ -1,4 +1,4 @@
-﻿
+
 using UnityEngine;
 using System.Collections.Generic; // List
 using UnityEngine.UI;   // UI
@@ -67,6 +67,10 @@ public class GameManager : MonoBehaviour
     /// How should the next tile be rotated?
     /// </summary>
     private Quaternion nextTileRotation;
+
+    public int Score;
+    public TMP_Text ScoreText;
+
     /// <summary>
     /// Start is called before the first frame update
     /// </summary>
