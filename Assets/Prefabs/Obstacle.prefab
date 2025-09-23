@@ -121,5 +121,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2c70df7b172d074a874a53f1be9426d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLowObstacle: 0
+  isLowObstacle: 1
   waitTime: 1

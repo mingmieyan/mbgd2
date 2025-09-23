@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
     private Quaternion nextTileRotation;
 
     public int Score;
-    public TMP_Text ScoreText;
+    
 
     /// <summary>
     /// Start is called before the first frame update
