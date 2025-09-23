@@ -200,11 +200,14 @@ public class PlayerRunner : MonoBehaviour
         if (currentHealth <= 0) Die();
     }
 
-    void Die()
+
+    public void Die()
     {
         Debug.Log("Player died!");
         gameObject.SetActive(false);
+
     }
+
 
     public bool IsSliding()
     {
