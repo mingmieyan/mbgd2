@@ -54,6 +54,9 @@ public class GameManager : MonoBehaviour
     private float remainingTime;
     private bool isGameOver = false;
 
+    [Header("Game Modes")]
+    public bool isEndlessMode = false; // 勾选后为无尽模式
+
     private int score = 0;          // 当前分数
     private int highScore;          // 最高分
 
@@ -99,6 +102,10 @@ public class GameManager : MonoBehaviour
 
         if (gameOverMenu != null)
             gameOverMenu.SetActive(false);
+
+        // 如果是无尽模式 -> 隐藏时间 UI
+        if (isEndlessMode && timerText != null)
+            timerText.gameObject.SetActive(false);
     }
 
 
@@ -114,40 +121,34 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver) return;
 
-         // 倒计时
-    if (levelTime > 0f)
-    {
-        levelTime -= Time.deltaTime;
-        if (levelTime < 0f) levelTime = 0f;
-        UpdateTimerUI();
-    }
-
-    // 玩家接近生成点时生成 Tile
-    if (player != null && Vector3.Distance(player.position, nextTileLocation) < 200f)
-    {
-        for (int i = 0; i < 7; i++) SpawnNextTile(true);
-        RecycleOldestTile();
-    }
-
-    // 倒计时结束
-    if (levelTime <= 0f)
-    {
-        GameOver();
-        isGameOver = true;
-    }
-
-    // 更新分数
-    score = ScoreManager.Instance != null ? ScoreManager.Instance.GetScore() : score;
-      
-        // 倒计时
-        remainingTime -= Time.deltaTime;
-        if (remainingTime <= 0)
+        // 无尽模式不需要倒计时
+        if (!isEndlessMode)
         {
-            remainingTime = 0;
-            GameOver();
+            // 正常倒计时逻辑
+            if (levelTime > 0f)
+            {
+                levelTime -= Time.deltaTime;
+                if (levelTime < 0f) levelTime = 0f;
+                UpdateTimerUI();
+            }
+
+            remainingTime -= Time.deltaTime;
+            if (remainingTime <= 0)
+            {
+                remainingTime = 0;
+                GameOver();
+            }
         }
 
-        UpdateTimerUI();
+        // 玩家接近生成点时生成 Tile
+        if (player != null && Vector3.Distance(player.position, nextTileLocation) < 200f)
+        {
+            for (int i = 0; i < 7; i++) SpawnNextTile(true);
+            RecycleOldestTile();
+        }
+
+        // 更新分数
+        score = ScoreManager.Instance != null ? ScoreManager.Instance.GetScore() : score;
     }
     public void SpawnNextTile(bool spawnObstacles = true)
     {

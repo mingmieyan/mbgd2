@@ -2520,6 +2520,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Heart Dark (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5403644772530398165, guid: ce70638aa2db77a4db26f927019b73b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5087,15 +5091,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bca3794a82dfba4191d43ce3bf0e25a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tile: {fileID: 4773796408614047416, guid: 3c2a4e4dbb56ccd408fd3405a7e4ce8b, type: 3}
+  tile: {fileID: 4773796408614047416, guid: 1b53f520bcf0cd548b56ddf35f039ab0, type: 3}
   startPoint: {x: 0, y: 0, z: -5}
   initSpawnNum: 15
   initNoObstacles: 1
   obstacle: {fileID: 7669585354021529271, guid: e07e0a24eccd94144973adbfed324916, type: 3}
   cabbage: {fileID: 6867601382551086233, guid: 61d83b9cf1e1f3f49b79d9d0dfbc4656, type: 3}
-  obstacleChance: 0.5
-  cabbageChance: 0.5
-  minDistance: 0.3
+  obstacleChance: 0.75
+  cabbageChance: 0.4
+  minDistance: 0.2
   levelTime: 150
   timerText: {fileID: 1924488704}
   scoreText: {fileID: 1624881114}
@@ -9428,7 +9432,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 50
+    m_FontSize: 45
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 3
@@ -9464,8 +9468,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.30273, y: 0}
-  m_SizeDelta: {x: 70.413, y: 56.81297}
+  m_AnchoredPosition: {x: 1.3073, y: 0}
+  m_SizeDelta: {x: 88.749, y: 56.81297}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1932361164
 GameObject:
@@ -10016,17 +10020,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9ad4d6016de66d4582e4c3e1e63cded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dodgeSpeed: 5
-  startForwardSpeed: 10
-  maxForwardSpeed: 50
-  acceleration: 0.05
+  dodgeSpeed: 7
+  startForwardSpeed: 15
+  maxForwardSpeed: 80
+  acceleration: 0.1
   jumpForce: 5
   slideDuration: 0.5
   slideColliderHeight: 0.5
   horizMovement: 1
   laneOffset: 2
   minSwipeDistance: 0.25
-  maxHealth: 3
+  maxHealth: 2
   heartContainer: {fileID: 1955610926}
   heartPrefab: {fileID: 2491772542945466945, guid: 5e08bdb35cb71aa40bf733a41703e5b6, type: 3}
   isJumpBoosted: 0
