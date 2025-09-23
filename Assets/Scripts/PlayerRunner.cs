@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerRunner : MonoBehaviour
@@ -21,6 +22,9 @@ public class PlayerRunner : MonoBehaviour
     private Vector3 originalColliderCenter;
     private bool isSliding = false;
 
+    private Coroutine jumpBoostCoroutine;
+    private Coroutine speedBoostCoroutine;
+
     public enum MobileHorizMovement { Accelerometer, ScreenTouch }
     public MobileHorizMovement horizMovement = MobileHorizMovement.Accelerometer;
 
@@ -36,6 +40,16 @@ public class PlayerRunner : MonoBehaviour
     [Header("Health Settings")]
     public int maxHealth = 3;
     private int currentHealth;
+    public int MaxHealth => maxHealth;
+
+    [Header("UI Settings")]
+    public Transform heartContainer;  // Canvas 下的父物体
+    public GameObject heartPrefab;    // 爱心图标 Prefab
+
+    private List<GameObject> hearts = new List<GameObject>();
+
+    public bool isJumpBoosted = false;
+    public float originalJumpForce;
 
     void Start()
     {
@@ -49,6 +63,9 @@ public class PlayerRunner : MonoBehaviour
 
         originalColliderHeight = col.height;
         originalColliderCenter = col.center;
+
+        currentHealth = maxHealth;
+        UpdateHearts();
     }
 
     void Update()
@@ -156,7 +173,7 @@ public class PlayerRunner : MonoBehaviour
             isGrounded = true;
 
         if (collision.gameObject.CompareTag("Obstacle"))
-            TakeDamage(1);
+            TakeDamage(3);
     }
 
     void SwipeInput(Touch touch)
@@ -192,9 +209,12 @@ public class PlayerRunner : MonoBehaviour
         }
     }
 
-    void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
+
+        UpdateHearts(); // 更新UI
         Debug.Log("Player took damage! Current Health: " + currentHealth);
 
         if (currentHealth <= 0) Die();
@@ -206,11 +226,84 @@ public class PlayerRunner : MonoBehaviour
         Debug.Log("Player died!");
         gameObject.SetActive(false);
 
+        // 通知 GameManager 处理统一的 Game Over
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        if (gm != null)
+            gm.GameOver(); // 统一处理结算和 UI
     }
 
 
     public bool IsSliding()
     {
         return isSliding;
+    }
+
+    public void ActivateJumpBoost(float multiplier, float duration)
+    {
+        // 如果已经在 Boost 中，先停止旧的协程
+        if (jumpBoostCoroutine != null)
+            StopCoroutine(jumpBoostCoroutine);
+
+        // 启动新的协程
+        jumpBoostCoroutine = StartCoroutine(JumpBoostRoutine(multiplier, duration));
+    }
+
+    private IEnumerator JumpBoostRoutine(float multiplier, float duration)
+    {
+        float originalJump = jumpForce;
+
+        // 如果当前已经是 Boosted，保持倍率不叠加
+        jumpForce = originalJump * multiplier;
+
+        yield return new WaitForSeconds(duration);
+
+        jumpForce = originalJump;
+        jumpBoostCoroutine = null;
+    }
+
+    public void ActivateSpeedBoost(float multiplier, float duration)
+    {
+        // 如果已经在 Boost 中，先停止旧的协程
+        if (speedBoostCoroutine != null)
+            StopCoroutine(speedBoostCoroutine);
+
+        speedBoostCoroutine = StartCoroutine(SpeedBoostRoutine(multiplier, duration));
+    }
+
+    private IEnumerator SpeedBoostRoutine(float multiplier, float duration)
+    {
+        float originalSpeed = forwardSpeed;
+
+        // 如果当前已经 Boosted，不叠加倍率
+        forwardSpeed = originalSpeed * multiplier;
+
+        yield return new WaitForSeconds(duration);
+
+        forwardSpeed = originalSpeed;
+        speedBoostCoroutine = null;
+    }
+
+    void UpdateHearts()
+    {
+        // 清空旧图标
+        foreach (var h in hearts)
+            Destroy(h);
+        hearts.Clear();
+
+        float spacing = 20f; // 单位根据 Canvas 设置，像素为例
+        Vector3 startPos = Vector3.zero;
+        // 生成对应数量的爱心
+        for (int i = 0; i < currentHealth; i++)
+        {
+            GameObject heart = Instantiate(heartPrefab, heartContainer);
+            heart.transform.localPosition = startPos + new Vector3(i * spacing, -20, 0);
+            hearts.Add(heart);
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("SpoiledFoodSpawn"))
+            TakeDamage(1);
     }
 }
