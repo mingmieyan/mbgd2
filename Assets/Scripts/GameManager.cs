@@ -57,6 +57,9 @@ public class GameManager : MonoBehaviour
     private int score = 0;          // 当前分数
     private int highScore;          // 最高分
 
+    public PickupManager pickupManager;//apply Other code
+
+
     // 存放生成出来的 tile
     private List<Transform> spawnedTiles = new List<Transform>();
     /// <summary>
@@ -111,40 +114,31 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver) return;
 
-        if (player != null && levelTime > 0)
-        {
-            levelTime -= Time.deltaTime;
-
-            if (Vector3.Distance(player.position, nextTileLocation) < 30f)
-            {
-                SpawnNextTile(true);
-                RecycleOldestTile();
-            }
-        }
-        // 倒计时
-        if (levelTime > 0)
-        {
-            levelTime -= Time.deltaTime;
-
-            // 当玩家接近下一个生成点时，生成多个 Tile
-            if (Vector3.Distance(player.position, nextTileLocation) < 200f) // 原来 30f
-            {
-                for (int i = 0; i < 7; i++) SpawnNextTile(true);
-                RecycleOldestTile();
-            }  
-        }
-
-        if (isGameOver) return;
-        // 更新分数逻辑
-        score = ScoreManager.Instance != null ? ScoreManager.Instance.GetScore() : score;
-
-        // 倒计时结束
+         // 倒计时
+    if (levelTime > 0f)
+    {
         levelTime -= Time.deltaTime;
-        if (levelTime <= 0f)
-        {
-            GameOver();
-            isGameOver = true;
-        }
+        if (levelTime < 0f) levelTime = 0f;
+        UpdateTimerUI();
+    }
+
+    // 玩家接近生成点时生成 Tile
+    if (player != null && Vector3.Distance(player.position, nextTileLocation) < 200f)
+    {
+        for (int i = 0; i < 7; i++) SpawnNextTile(true);
+        RecycleOldestTile();
+    }
+
+    // 倒计时结束
+    if (levelTime <= 0f)
+    {
+        GameOver();
+        isGameOver = true;
+    }
+
+    // 更新分数
+    score = ScoreManager.Instance != null ? ScoreManager.Instance.GetScore() : score;
+      
         // 倒计时
         remainingTime -= Time.deltaTime;
         if (remainingTime <= 0)
@@ -174,6 +168,28 @@ public class GameManager : MonoBehaviour
         {
             TrySpawnObjects(newTile);
         }
+
+        // 获取 Tile 下所有 JumpBoostSpawn 点
+        List<Transform> pickupSpawnPoints = new List<Transform>();
+        foreach (Transform child in newTile)
+        {
+            if (child.CompareTag("pickupSpawnPoints")) // 这里的标签就是你加的
+                pickupSpawnPoints.Add(child);
+        }
+
+        pickupManager.SpawnPickups(pickupSpawnPoints);
+
+        // 假设 pickupManager 已经挂在场景里
+        // 每个 Tile 的变质食物生成点列表
+        List<Transform> spoiledFoodPoints = new List<Transform>();
+        foreach (Transform child in newTile)
+        {
+            if (child.CompareTag("SpoiledFoodSpawn"))
+                spoiledFoodPoints.Add(child);
+        }
+
+        // 调用生成
+        pickupManager.SpawnSpoiledFood(spoiledFoodPoints);
     }
     private void TrySpawnObjects(Transform newTile)
     {
@@ -220,6 +236,7 @@ public class GameManager : MonoBehaviour
         {
             var oldTile = spawnedTiles[0];
             spawnedTiles.RemoveAt(0);
+            pickupManager.ClearPickups();
             Destroy(oldTile.gameObject);
         }
     }
@@ -252,10 +269,12 @@ public class GameManager : MonoBehaviour
     }
 
     private int finalScore = 0;
-    private void GameOver()
+    public void GameOver()
     {
+        if (isGameOver) return; // 防止重复调用
+        isGameOver = true;
         // 保存最终分数
-        finalScore = score;
+        finalScore = ScoreManager.Instance?.GetScore() ?? score;
 
         // 停止游戏
         Time.timeScale = 0f;

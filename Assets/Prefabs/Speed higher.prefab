@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6791318149501192764
+--- !u!1 &9214798577710789832
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7669585354021529271}
-  - component: {fileID: 3080335509608013010}
-  - component: {fileID: 5438068158920944042}
-  - component: {fileID: 8851739265121640946}
-  - component: {fileID: 5076600158816249559}
+  - component: {fileID: 3957491718410692913}
+  - component: {fileID: 9127257907065760796}
+  - component: {fileID: 2605954198832870108}
+  - component: {fileID: 6384752981107872577}
+  - component: {fileID: 6665025653390392517}
+  - component: {fileID: 6390897876455063694}
   m_Layer: 0
-  m_Name: Obstacle
-  m_TagString: Obstacle
+  m_Name: Speed higher
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7669585354021529271
+--- !u!4 &3957491718410692913
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6791318149501192764}
+  m_GameObject: {fileID: 9214798577710789832}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0.25}
-  m_LocalScale: {x: 1, y: 2, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0.88, z: 7.05}
+  m_LocalScale: {x: 0.85, y: 0.85, z: 0.85}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3080335509608013010
+--- !u!33 &9127257907065760796
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6791318149501192764}
+  m_GameObject: {fileID: 9214798577710789832}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &5438068158920944042
+--- !u!23 &2605954198832870108
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6791318149501192764}
+  m_GameObject: {fileID: 9214798577710789832}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -66,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: c2e40fa84d53ccd428f640eac126b1fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -88,13 +89,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8851739265121640946
+--- !u!65 &6384752981107872577
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6791318149501192764}
+  m_GameObject: {fileID: 9214798577710789832}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -103,23 +104,41 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5076600158816249559
+--- !u!114 &6665025653390392517
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6791318149501192764}
+  m_GameObject: {fileID: 9214798577710789832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2c70df7b172d074a874a53f1be9426d, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b4b4a92365a43c4b9ab6317f8eafe81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLowObstacle: 0
-  waitTime: 1
+  floatAmplitude: 0.1
+  floatFrequency: 1
+  rotationSpeed: {x: 0, y: 30, z: 0}
+  scaleAmplitude: 0.1
+  scaleFrequency: 2
+--- !u!114 &6390897876455063694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9214798577710789832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 179f96c4407e57a4fb3a58c9ba243825, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreValue: 20
+  speedMultiplier: 1.2
+  boostDuration: 5

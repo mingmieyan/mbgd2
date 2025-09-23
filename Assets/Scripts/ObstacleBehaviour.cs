@@ -18,11 +18,11 @@ public class ObstacleBehaviour : MonoBehaviour
             return;
         }
 
-        // 玩家死亡，不 Destroy
-         player.Die();
+        // 低障碍且玩家正在滑行 => 忽略
+        if (isLowObstacle && player.IsSliding()) return;
 
-        // 延迟显示 "You Lost" 菜单
-        StartCoroutine(ShowYouLostMenu(waitTime));
+        // 扣血到死亡时，会触发 PlayerRunner.Die() -> GameManager.GameOver()
+        player.TakeDamage(player.MaxHealth); // 或者直接死亡
     }
 
     private IEnumerator ShowYouLostMenu(float delay)

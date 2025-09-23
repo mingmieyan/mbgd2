@@ -7,6 +7,9 @@ TagManager:
   - ObstacleSpawn
   - Obstacle
   - Money
+  - JumpBoostSpawn
+  - pickupSpawnPoints
+  - SpoiledFoodSpawn
   layers:
   - Default
   - TransparentFX
