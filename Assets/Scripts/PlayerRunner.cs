@@ -7,6 +7,7 @@ public class PlayerRunner : MonoBehaviour
 {
     private Rigidbody rb;
     private CapsuleCollider col;
+    private Animator animator;   //  新增 Animator 引用
 
     [Header("Movement Settings")]
     public float dodgeSpeed = 5;
@@ -51,11 +52,21 @@ public class PlayerRunner : MonoBehaviour
     public bool isJumpBoosted = false;
     public float originalJumpForce;
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+        animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.applyRootMotion = false; //  禁止 Root Motion
+        }
+    }
+    void Start()
+    {
+        
 
         minSwipeDistancePixels = minSwipeDistance * Screen.dpi;
         currentHealth = maxHealth;
@@ -85,6 +96,14 @@ public class PlayerRunner : MonoBehaviour
             SwipeInput(touch);
         }
 #endif
+
+        // 更新 Animator 参数
+        if (animator != null)
+        {
+            // 假设 Animator 里有 Speed 参数
+            animator.SetBool("IsGrounded", isGrounded);
+            animator.SetBool("IsSliding", isSliding);
+        }
     }
 
     void FixedUpdate()
@@ -116,6 +135,9 @@ public class PlayerRunner : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
+
+            if (animator != null)
+                animator.SetTrigger("Jump"); //  播放跳跃动画
         }
     }
 
@@ -136,6 +158,10 @@ public class PlayerRunner : MonoBehaviour
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, -10f, rb.linearVelocity.z);
         }
 
+        //  播放下滑动画
+        if (animator != null)
+            animator.SetTrigger("Slide");
+
         StartCoroutine(EndSlideAfterDelay());
     }
 
@@ -144,6 +170,9 @@ public class PlayerRunner : MonoBehaviour
         yield return new WaitForSeconds(slideDuration);
         yield return StartCoroutine(SmoothResetCollider());
         isSliding = false;
+
+        if (animator != null)
+            animator.ResetTrigger("Slide"); //  防止卡住
     }
 
     IEnumerator SmoothResetCollider()
@@ -223,6 +252,9 @@ public class PlayerRunner : MonoBehaviour
 
     public void Die()
     {
+        if (animator != null)
+            animator.SetTrigger("Die"); //  播放死亡动画
+
         Debug.Log("Player died!");
         gameObject.SetActive(false);
 
@@ -306,4 +338,13 @@ public class PlayerRunner : MonoBehaviour
         if (other.CompareTag("SpoiledFoodSpawn"))
             TakeDamage(1);
     }
+
+    public void AddHealth(int amount)
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        UpdateHearts(); // 更新 UI
+        Debug.Log("Player healed! Current Health: " + currentHealth);
+    }
+
+    
 }

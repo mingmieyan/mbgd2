@@ -22,6 +22,14 @@ public class PickupManager : MonoBehaviour
     [Range(0f, 1f)] public float spoiledFoodChance = 0.3f;
     public float spoiledFoodYOffset = 0.5f;
 
+    [Header("Heal Settings")]
+    public Transform healPickupPrefab;
+    [Range(0f, 1f)]
+    public float healChance = 0.2f;   // 出现概率
+    public float healYOffset = 0.5f;  // 离 spawn 点高度
+
+    [Header("Spoiled Food Prefabs")]
+    public GameObject[] spoiledFoodPrefabs; // 可以拖多个进来
 
     [Header("Spawn Points")]
     public List<Transform> pickupSpawnPoints; // Tile 内空中 spawn 点列表
@@ -36,21 +44,22 @@ public class PickupManager : MonoBehaviour
     /// <param name="spawnPoints">Tile 内空中生成点</param>
     public void SpawnPickups(List<Transform> spawnPoints)
     {
-        if (spawnPoints == null || spawnPoints.Count == 0) return;
-
-        foreach (var spawnPoint in spawnPoints)
+        foreach (Transform spawnPoint in spawnPoints)
         {
             bool spawnJump = Random.value < jumpBoostChance;
             bool spawnSpeed = Random.value < speedBoostChance;
+            bool spawnHeal = Random.value < healChance;
 
-
-            // 避免两种道具同时出现在同一个点
-            if (spawnJump && spawnSpeed)
+            // 避免多个道具同点生成
+            int count = (spawnJump ? 1 : 0) + (spawnSpeed ? 1 : 0) + (spawnHeal ? 1 : 0);
+            if (count > 1)
             {
-                if (Random.value < 0.5f)
-                    spawnSpeed = false;
-                else
-                    spawnJump = false;
+                // 随机只保留一个
+                int choice = Random.Range(0, count);
+                spawnJump = spawnSpeed = spawnHeal = false;
+                if (choice == 0) spawnJump = true;
+                else if (choice == 1) spawnSpeed = true;
+                else spawnHeal = true;
             }
 
             // 生成 JumpBoost
@@ -67,6 +76,14 @@ public class PickupManager : MonoBehaviour
                 Vector3 spawnPos = spawnPoint.position + Vector3.up * speedBoostYOffset;
                 Transform speedBoost = Instantiate(speedBoostPrefab, spawnPos, Quaternion.identity, spawnPoint);
                 activePickups.Add(speedBoost);
+            }
+
+            // 生成 Heal
+            if (spawnHeal && healPickupPrefab != null)
+            {
+                Vector3 spawnPos = spawnPoint.position + Vector3.up * healYOffset;
+                Transform healPickup = Instantiate(healPickupPrefab, spawnPos, Quaternion.identity, spawnPoint);
+                activePickups.Add(healPickup);
             }
         }
     }
@@ -103,15 +120,23 @@ public class PickupManager : MonoBehaviour
     {
         if (spoiledFoodPrefab == null || spawnPoints.Count == 0) return;
 
-        
-            if (Random.value < spoiledFoodChance && spawnPoints.Count > 0)
-            {
-                Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
-                Vector3 spawnPos = spawnPoint.position + Vector3.up * spoiledFoodYOffset;
-                var spoiled = Instantiate(spoiledFoodPrefab, spawnPos, Quaternion.identity);
-                spoiled.SetParent(spawnPoint, true);
-                activeSpoiledFoods.Add(spoiled);
+
+        if (Random.value < spoiledFoodChance)
+        {
+            // 随机一个生成点
+            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+
+            // 随机一个 SpoiledFood prefab
+            int index = Random.Range(0, spoiledFoodPrefabs.Length);
+            GameObject prefab = spoiledFoodPrefabs[index];
+
+            // 生成位置
+            Vector3 spawnPos = spawnPoint.position + Vector3.up * spoiledFoodYOffset;
+
+            // 生成并挂在 spawnPoint 下面
+            Transform spoiled = Instantiate(prefab, spawnPos, Quaternion.identity, spawnPoint).transform;
+            activeSpoiledFoods.Add(spoiled);
         }
-        
+
     }
 }

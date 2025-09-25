@@ -1089,6 +1089,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8699787447509501512, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.49
@@ -1107,7 +1111,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.001
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1171,7 +1175,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
       propertyPath: m_Name
-      value: Running (3)
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
       propertyPath: m_TagString
@@ -1185,9 +1189,18 @@ PrefabInstance:
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7036213049465896255, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8471202573340202098, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 65702495048144492, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
+    - {fileID: -8700617353114198275, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 06de2ee037d640e4eb151821bd86f25f, type: 3}
@@ -1228,9 +1241,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.845674
-  m_Height: 4.056672
+  m_Height: 4.5529113
   m_Direction: 1
-  m_Center: {x: 0.047930285, y: 2.1199155, z: 0}
+  m_Center: {x: 0.047930285, y: 2.3680336, z: 0}
 --- !u!114 &588417680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1299,14 +1312,14 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588417678}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 500e337a1f4619f4a80cae10f6268c1b, type: 3}
+  m_Avatar: {fileID: 9000000, guid: df8002b915dca264caab0a0106d982a1, type: 3}
   m_Controller: {fileID: 9100000, guid: a31fe553af40ac341a814bdbb7f6bae1, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
+  m_AnimatePhysics: 1
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -6944,7 +6957,7 @@ MonoBehaviour:
   initSpawnNum: 15
   initNoObstacles: 1
   obstacle: {fileID: 7669585354021529271, guid: e07e0a24eccd94144973adbfed324916, type: 3}
-  cabbage: {fileID: 6867601382551086233, guid: 61d83b9cf1e1f3f49b79d9d0dfbc4656, type: 3}
+  cabbage: {fileID: 8567094400562171133, guid: e625079d48858864a8ccadec77aa35eb, type: 3}
   obstacleChance: 0.5
   cabbageChance: 0.5
   minDistance: 0.3
@@ -6986,15 +6999,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df6c9b683f3fd824089f0695fb9ad796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpBoostPrefab: {fileID: 1965772447373170998, guid: 69560e2d39d3189439dc4ecfd8913636, type: 3}
+  jumpBoostPrefab: {fileID: 7860424722505849668, guid: f07085a8a101ea94fbb95f54a792df38, type: 3}
   jumpBoostChance: 0.03
-  jumpBoostYOffset: 0.5
-  speedBoostPrefab: {fileID: 3957491718410692913, guid: cdd907ff9cd2a24448eea2d14bfe3ec1, type: 3}
+  jumpBoostYOffset: 0
+  speedBoostPrefab: {fileID: 6645165674673481451, guid: 40fdb71dfcf10a84e8f0d19965a1fe09, type: 3}
   speedBoostChance: 0.02
-  speedBoostYOffset: 0.5
-  spoiledFoodPrefab: {fileID: 1543627788491503015, guid: 5c2cc2812f65f79439b2892018eb224b, type: 3}
+  speedBoostYOffset: 0
+  spoiledFoodPrefab: {fileID: 5929200580514439481, guid: b00914d25f62e514ea371c2aa4411489, type: 3}
   spoiledFoodChance: 0.9
   spoiledFoodYOffset: 0.1
+  healPickupPrefab: {fileID: 4017082130014609445, guid: c4d176ee14f47584a887f95d8ee4bfad, type: 3}
+  healChance: 0.01
+  healYOffset: 0
+  spoiledFoodPrefabs:
+  - {fileID: 9032947608277277784, guid: b00914d25f62e514ea371c2aa4411489, type: 3}
+  - {fileID: 8091015733000681976, guid: 0b6fd7446aea5004481818c6c8539917, type: 3}
   pickupSpawnPoints: []
 --- !u!114 &1933417994
 MonoBehaviour:
