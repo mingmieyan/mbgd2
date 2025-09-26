@@ -39,46 +39,30 @@ public class UIfloat : MonoBehaviour
     private float baseScaleX;
     private float baseScaleY;
 
-    private bool initialized = false;
+   
 
-    protected virtual void Awake()
+    private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+        baseLocalPosition = rectTransform.localPosition;
+        baseScaleX = Mathf.Abs(rectTransform.localScale.x);
+        baseScaleY = rectTransform.localScale.y;
 
-        if (transform.localScale.x == -1)
-            right = false;
-
-        baseScaleX = Mathf.Abs(transform.localScale.x);
-        baseScaleY = transform.localScale.y;
-
-        originLocalPosition = rectTransform.localPosition;
+        // 只在Awake时随机一次，不要每次OnEnable都随机
+        randomPhase = Random.Range(0f, 1f);
     }
 
-    private void Start()
-    {
-        if (!initialized)
-            Init();
-    }
+   
 
-    private void Init()
-    {
-        baseLocalPosition = originLocalPosition;
-
-        if (randomPhase == 0)
-            randomPhase = Random.Range(0f, 360f);
-
-        transform.localScale = new Vector3(right ? 1 : -1, 1, 1);
-
-        initialized = true;
-    }
-
+   
     private float GetValue(float speed, float phase)
     {
-        float angle = speed * Time.fixedTime;
+        // 用 Time.time 代替 fixedTime
+        float angle = speed * Time.time;
         return -Mathf.Cos((angle + phase + randomPhase) * Mathf.Deg2Rad);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         float v;
         float vvh = 1;
@@ -113,5 +97,4 @@ public class UIfloat : MonoBehaviour
             rectTransform.localRotation = Quaternion.Euler(0, 0, rotz);
         }
     }
-
 }

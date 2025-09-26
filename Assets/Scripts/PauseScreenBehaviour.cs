@@ -24,6 +24,7 @@ public class PauseScreenBehaviour : MonoBehaviour
     /// <param name="isPaused"></param>
     public void SetPauseMenu(bool isPaused)
     {
+
         paused = isPaused;
         /* If the game is paused, timeScale is 0, otherwise 1 */
         Time.timeScale = (paused) ? 0 : 1;
@@ -35,6 +36,7 @@ public class PauseScreenBehaviour : MonoBehaviour
     /// <param name="levelName">The name of the level we want to go to</param>
     public void LoadLevel(string levelName)
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(levelName);
     }
 
