@@ -24,8 +24,8 @@ public class GameManager : MonoBehaviour
     public int initNoObstacles = 4;
 
     [Header("Spawn Settings")]
-    [Tooltip("障碍物预制体")]
-    public Transform obstacle;
+    [Header("Obstacle Settings")]
+    public List<ObstacleData> obstacles = new List<ObstacleData>();
 
     [Tooltip("卷心菜预制体")]
     public Transform cabbage;
@@ -70,6 +70,11 @@ public class GameManager : MonoBehaviour
     public Transform apple;
     [Tooltip("苹果生成概率 (0-1)")]
     [Range(0f, 1f)] public float appleChance = 0.3f;
+
+    [Header("Vegetable Settings")]
+    public List<VegetableData> vegetables = new List<VegetableData>();
+
+    
 
 
     // 存放生成出来的 tile
@@ -174,7 +179,7 @@ public class GameManager : MonoBehaviour
         nextTileLocation = nextTile.position;
         nextTileRotation = nextTile.rotation;
 
-        if (spawnObstacles && obstacle != null)
+        if (spawnObstacles && obstacles != null)
         {
             TrySpawnObjects(newTile);
         }
@@ -212,43 +217,44 @@ public class GameManager : MonoBehaviour
 
         if (spawnPoints.Count == 0) return;
 
-        // 随机选一个点来放障碍物
-
+        // 随机一个点来放障碍物
         Transform obstaclePoint = null;
-
-        if (Random.value < obstacleChance && obstacle != null)
+        if (Random.value < obstacleChance && obstacles.Count > 0)
         {
             obstaclePoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
-            var newObstacle = Instantiate(obstacle, obstaclePoint.position, Quaternion.identity);
-            newObstacle.SetParent(obstaclePoint);
 
+            // 随机一个障碍物
+            var obstacleData = obstacles[Random.Range(0, obstacles.Count)];
+
+            if (obstacleData.prefab != null)
+            {
+                var newObstacle = Instantiate(obstacleData.prefab,
+                    obstaclePoint.position + Vector3.up * obstacleData.yOffset, // 加上偏移
+                    Quaternion.identity);
+
+                newObstacle.SetParent(obstaclePoint);
+            }
         }
 
-        // 2. 其他点放蔬菜（卷心菜/苹果）
+        // 其他点生成蔬菜（从列表里挑）
         foreach (var spawnPoint in spawnPoints)
         {
-            // 跳过障碍物点
             if (spawnPoint == obstaclePoint) continue;
 
             float roll = Random.value;
+            float cumulative = 0f;
 
-            if (roll < cabbageChance) // 卷心菜
+            foreach (var veg in vegetables)
             {
-                if (cabbage != null)
+                cumulative += veg.spawnChance;
+                if (roll < cumulative && veg.prefab != null)
                 {
-                    var newCabbage = Instantiate(cabbage, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
-                    newCabbage.SetParent(spawnPoint);
+                    var newVeg = Instantiate(veg.prefab, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
+                    newVeg.SetParent(spawnPoint);
+                    break; // 只生成一个
                 }
             }
-            else if (roll < cabbageChance + appleChance) // 苹果
-            {
-                if (apple != null)
-                {
-                    var newApple = Instantiate(apple, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
-                    newApple.SetParent(spawnPoint);
-                }
-            }
-            // roll >= cabbageChance + appleChance → 什么都不生成
+            // 如果 roll >= 所有累计概率 → 什么都不生成
         }
     }
     /// <summary>
@@ -348,6 +354,23 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(menuSceneName);
+    }
+
+    [System.Serializable]
+    public class VegetableData
+    {
+        public string name;
+        public Transform prefab;
+        [Range(0f, 1f)] public float spawnChance = 0.3f; // 出现概率
+
+    }
+
+    [System.Serializable]
+    public class ObstacleData
+    {
+        public string name;
+        public Transform prefab;
+        [Range(-5f, 5f)] public float yOffset = 0f; // Y 轴偏移，可以是正数/负数
     }
 }
 
