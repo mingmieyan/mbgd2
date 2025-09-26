@@ -1271,6 +1271,10 @@ MonoBehaviour:
   heartPrefab: {fileID: 2491772542945466945, guid: 5e08bdb35cb71aa40bf733a41703e5b6, type: 3}
   isJumpBoosted: 0
   originalJumpForce: 0
+  modelRoot: {fileID: 0}
+  slideYOffset: -1
+  recoverSpeed: 1
+  slideResetDuration: 0.6
 --- !u!54 &588417681
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1319,7 +1323,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_AnimatePhysics: 1
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -6340,6 +6344,10 @@ MonoBehaviour:
   heartPrefab: {fileID: 0}
   isJumpBoosted: 0
   originalJumpForce: 0
+  modelRoot: {fileID: 0}
+  slideYOffset: -0.5
+  recoverSpeed: 5
+  slideResetDuration: 0.5
 --- !u!114 &1813448173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7630,6 +7638,10 @@ MonoBehaviour:
   heartPrefab: {fileID: 2491772542945466945, guid: 5e08bdb35cb71aa40bf733a41703e5b6, type: 3}
   isJumpBoosted: 0
   originalJumpForce: 0
+  modelRoot: {fileID: 0}
+  slideYOffset: -0.5
+  recoverSpeed: 5
+  slideResetDuration: 0.5
 --- !u!54 &2056054818
 Rigidbody:
   m_ObjectHideFlags: 0

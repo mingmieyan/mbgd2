@@ -52,17 +52,25 @@ public class PlayerRunner : MonoBehaviour
     public bool isJumpBoosted = false;
     public float originalJumpForce;
 
+    [SerializeField] public Transform modelRoot; // 角色模型的父节点（不是整个Player，有Collider和Rigidbody的那个）
+    [SerializeField] public float slideYOffset = -0.5f;
+    [SerializeField] public float recoverSpeed = 5f;    // 恢复速度
+
+    private float currentYOffset = 0f;
+
+    [Header("Slide Settings")]
+    public float slideResetDuration = 0.5f; // 调整为0.5~1秒比较自然
+
     void Awake()
     {
+        animator = GetComponentInChildren<Animator>();
+
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-        animator = GetComponent<Animator>();
-        if (animator != null)
-        {
-            animator.applyRootMotion = false; //  禁止 Root Motion
-        }
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        animator.applyRootMotion = false; // 不用 Root Motion
     }
     void Start()
     {
@@ -104,23 +112,59 @@ public class PlayerRunner : MonoBehaviour
             animator.SetBool("IsGrounded", isGrounded);
             animator.SetBool("IsSliding", isSliding);
         }
+
+        if (modelRoot != null && animator != null)
+        {
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+            if (stateInfo.IsName("Slidinging"))
+            {
+                float t = stateInfo.normalizedTime; // 0 ~ 1 (动画进度)
+
+                if (t < 0.5f)
+                {
+                    // 动画前半段：代码强制往下压
+                    currentYOffset = Mathf.Lerp(currentYOffset, slideYOffset, Time.deltaTime * 10f);
+                }
+                else
+                {
+                    // 动画后半段：交给动画自己回位，不强制贴地
+                    currentYOffset = Mathf.Lerp(currentYOffset, 0f, Time.deltaTime * recoverSpeed);
+                }
+            }
+            else
+            {
+                // 非滑铲时：保持站立高度
+                currentYOffset = Mathf.Lerp(currentYOffset, 0f, Time.deltaTime * recoverSpeed);
+            }
+
+            // 应用到模型本地坐标（只改 y）
+            Vector3 lp = modelRoot.localPosition;
+            lp.y = currentYOffset;
+            modelRoot.localPosition = lp;
+        }
+
+
     }
 
     void FixedUpdate()
     {
-        // ǰ��
+        // 前进
         Vector3 forwardMove = Vector3.forward * forwardSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(rb.position + forwardMove);
 
-        // �����ƶ�
+        // 横移
         Vector3 targetPos = new Vector3(currentLane * laneOffset, rb.position.y, rb.position.z);
         Vector3 moveDir = targetPos - rb.position;
-        rb.MovePosition(rb.position + moveDir * dodgeSpeed * Time.fixedDeltaTime);
 
-        // ��������»����ý�ɫ�����½�������
+        // 合并位移
+        Vector3 totalMove = forwardMove + moveDir * dodgeSpeed * Time.fixedDeltaTime;
+
+        rb.MovePosition(rb.position + totalMove);
+
+        // 下滑时，空中强制向下加速度
         if (isSliding && !isGrounded)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, -10f, rb.linearVelocity.z); // ��һ�������ٶ�
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, -10f, rb.linearVelocity.z);
         }
     }
 
@@ -178,7 +222,7 @@ public class PlayerRunner : MonoBehaviour
     IEnumerator SmoothResetCollider()
     {
         float elapsed = 0f;
-        float duration = 0.2f;
+        float duration = slideResetDuration;   // 用你在 Inspector 里设的时间
 
         float startHeight = col.height;
         Vector3 startCenter = col.center;

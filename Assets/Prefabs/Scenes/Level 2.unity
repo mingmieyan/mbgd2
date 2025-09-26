@@ -2051,6 +2051,9 @@ MonoBehaviour:
   heartPrefab: {fileID: 0}
   isJumpBoosted: 0
   originalJumpForce: 0
+  modelRoot: {fileID: 0}
+  slideYOffset: -0.5
+  recoverSpeed: 5
 --- !u!65 &266588873
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5602,7 +5605,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_AnimatePhysics: 1
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -5635,6 +5638,9 @@ MonoBehaviour:
   heartPrefab: {fileID: 2491772542945466945, guid: 5e08bdb35cb71aa40bf733a41703e5b6, type: 3}
   isJumpBoosted: 0
   originalJumpForce: 0
+  modelRoot: {fileID: 0}
+  slideYOffset: -0.5
+  recoverSpeed: 5
 --- !u!1 &1166033966
 GameObject:
   m_ObjectHideFlags: 0
@@ -5814,6 +5820,10 @@ MonoBehaviour:
   spoiledFoodPrefab: {fileID: 1543627788491503015, guid: 5c2cc2812f65f79439b2892018eb224b, type: 3}
   spoiledFoodChance: 0.9
   spoiledFoodYOffset: 0.1
+  healPickupPrefab: {fileID: 4017082130014609445, guid: c4d176ee14f47584a887f95d8ee4bfad, type: 3}
+  healChance: 0.01
+  healYOffset: 0.5
+  spoiledFoodPrefabs: []
   pickupSpawnPoints: []
 --- !u!114 &1208305190
 MonoBehaviour:
