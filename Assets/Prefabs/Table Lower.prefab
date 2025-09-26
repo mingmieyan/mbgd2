@@ -535,7 +535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2c70df7b172d074a874a53f1be9426d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLowObstacle: 1
+  isLowObstacle: 0
   waitTime: 1
 --- !u!65 &8589050328244113143
 BoxCollider:
