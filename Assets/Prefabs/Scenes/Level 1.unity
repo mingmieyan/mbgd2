@@ -6967,7 +6967,7 @@ MonoBehaviour:
   obstacle: {fileID: 7669585354021529271, guid: e07e0a24eccd94144973adbfed324916, type: 3}
   cabbage: {fileID: 8567094400562171133, guid: e625079d48858864a8ccadec77aa35eb, type: 3}
   obstacleChance: 0.5
-  cabbageChance: 0.5
+  cabbageChance: 0.3
   minDistance: 0.3
   levelTime: 60
   timerText: {fileID: 736427608}
@@ -6978,7 +6978,9 @@ MonoBehaviour:
   totalTime: 60
   isEndlessMode: 0
   pickupManager: {fileID: 1933417993}
-  Score: 0
+  apple: {fileID: 2219597585781685371, guid: 1d7ab62ff66ddc94b9f6044076e9370d, type: 3}
+  appleChance: 0.2
+  Score: 15
   gameOver: 0
 --- !u!114 &1933417992
 MonoBehaviour:
@@ -7008,7 +7010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpBoostPrefab: {fileID: 7860424722505849668, guid: f07085a8a101ea94fbb95f54a792df38, type: 3}
-  jumpBoostChance: 0.03
+  jumpBoostChance: 1
   jumpBoostYOffset: 0
   speedBoostPrefab: {fileID: 6645165674673481451, guid: 40fdb71dfcf10a84e8f0d19965a1fe09, type: 3}
   speedBoostChance: 0.02

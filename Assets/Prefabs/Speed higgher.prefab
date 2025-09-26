@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7080645493070909138}
   - component: {fileID: 1492808955840111202}
   - component: {fileID: -3322974249934781557}
+  - component: {fileID: -5751067429860208660}
   m_Layer: 0
   m_Name: Speed higgher
   m_TagString: Untagged
@@ -89,6 +90,19 @@ MonoBehaviour:
   scoreValue: 20
   speedMultiplier: 1.2
   boostDuration: 5
+--- !u!114 &-5751067429860208660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863141124558334565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6849d93b372b6542819cf519034e6a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentTile: {fileID: 4773796408614047416, guid: 3c2a4e4dbb56ccd408fd3405a7e4ce8b, type: 3}
 --- !u!1 &1017047480833074239
 GameObject:
   m_ObjectHideFlags: 0

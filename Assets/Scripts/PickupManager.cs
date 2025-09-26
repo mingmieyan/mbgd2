@@ -42,7 +42,7 @@ public class PickupManager : MonoBehaviour
     /// 根据传入 spawn 点列表生成道具
     /// </summary>
     /// <param name="spawnPoints">Tile 内空中生成点</param>
-    public void SpawnPickups(List<Transform> spawnPoints)
+    public void SpawnPickups(List<Transform> spawnPoints, Transform parentTile)
     {
         foreach (Transform spawnPoint in spawnPoints)
         {
@@ -50,11 +50,9 @@ public class PickupManager : MonoBehaviour
             bool spawnSpeed = Random.value < speedBoostChance;
             bool spawnHeal = Random.value < healChance;
 
-            // 避免多个道具同点生成
             int count = (spawnJump ? 1 : 0) + (spawnSpeed ? 1 : 0) + (spawnHeal ? 1 : 0);
             if (count > 1)
             {
-                // 随机只保留一个
                 int choice = Random.Range(0, count);
                 spawnJump = spawnSpeed = spawnHeal = false;
                 if (choice == 0) spawnJump = true;
@@ -62,28 +60,20 @@ public class PickupManager : MonoBehaviour
                 else spawnHeal = true;
             }
 
-            // 生成 JumpBoost
+            Transform newPickup = null;
+
             if (spawnJump && jumpBoostPrefab != null)
-            {
-                Vector3 spawnPos = spawnPoint.position + Vector3.up * jumpBoostYOffset;
-                Transform jumpBoost = Instantiate(jumpBoostPrefab, spawnPos, Quaternion.identity, spawnPoint);
-                activePickups.Add(jumpBoost);
-            }
+                newPickup = Instantiate(jumpBoostPrefab, spawnPoint.position + Vector3.up * jumpBoostYOffset, Quaternion.identity, spawnPoint);
+            else if (spawnSpeed && speedBoostPrefab != null)
+                newPickup = Instantiate(speedBoostPrefab, spawnPoint.position + Vector3.up * speedBoostYOffset, Quaternion.identity, spawnPoint);
+            else if (spawnHeal && healPickupPrefab != null)
+                newPickup = Instantiate(healPickupPrefab, spawnPoint.position + Vector3.up * healYOffset, Quaternion.identity, spawnPoint);
 
-            // 生成 SpeedBoost
-            if (spawnSpeed && speedBoostPrefab != null)
+            if (newPickup != null)
             {
-                Vector3 spawnPos = spawnPoint.position + Vector3.up * speedBoostYOffset;
-                Transform speedBoost = Instantiate(speedBoostPrefab, spawnPos, Quaternion.identity, spawnPoint);
-                activePickups.Add(speedBoost);
-            }
-
-            // 生成 Heal
-            if (spawnHeal && healPickupPrefab != null)
-            {
-                Vector3 spawnPos = spawnPoint.position + Vector3.up * healYOffset;
-                Transform healPickup = Instantiate(healPickupPrefab, spawnPos, Quaternion.identity, spawnPoint);
-                activePickups.Add(healPickup);
+                var id = newPickup.gameObject.AddComponent<PickupIdentifier>();
+                id.parentTile = parentTile;
+                activePickups.Add(newPickup);
             }
         }
     }
@@ -116,27 +106,49 @@ public class PickupManager : MonoBehaviour
         activePickups.Clear();
     }
 
-    public void SpawnSpoiledFood(List<Transform> spawnPoints)
+    public void SpawnSpoiledFood(List<Transform> spawnPoints, Transform parentTile)
     {
-        if (spoiledFoodPrefab == null || spawnPoints.Count == 0) return;
-
+        if (spoiledFoodPrefabs == null || spoiledFoodPrefabs.Length == 0 || spawnPoints.Count == 0) return;
 
         if (Random.value < spoiledFoodChance)
         {
-            // 随机一个生成点
             Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
-
-            // 随机一个 SpoiledFood prefab
             int index = Random.Range(0, spoiledFoodPrefabs.Length);
             GameObject prefab = spoiledFoodPrefabs[index];
 
-            // 生成位置
-            Vector3 spawnPos = spawnPoint.position + Vector3.up * spoiledFoodYOffset;
-
-            // 生成并挂在 spawnPoint 下面
-            Transform spoiled = Instantiate(prefab, spawnPos, Quaternion.identity, spawnPoint).transform;
+            Transform spoiled = Instantiate(prefab, spawnPoint.position + Vector3.up * spoiledFoodYOffset, Quaternion.identity, spawnPoint).transform;
+            var id = spoiled.gameObject.AddComponent<PickupIdentifier>();
+            id.parentTile = parentTile;
             activeSpoiledFoods.Add(spoiled);
         }
+    }
 
+    public void ClearPickupsForTile(Transform tile)
+    {
+        // activePickups
+        for (int i = activePickups.Count - 1; i >= 0; i--)
+        {
+            var p = activePickups[i];
+            if (p == null) { activePickups.RemoveAt(i); continue; }
+            var id = p.GetComponent<PickupIdentifier>();
+            if (id != null && id.parentTile == tile)
+            {
+                Destroy(p.gameObject);
+                activePickups.RemoveAt(i);
+            }
+        }
+
+        // activeSpoiledFoods
+        for (int i = activeSpoiledFoods.Count - 1; i >= 0; i--)
+        {
+            var p = activeSpoiledFoods[i];
+            if (p == null) { activeSpoiledFoods.RemoveAt(i); continue; }
+            var id = p.GetComponent<PickupIdentifier>();
+            if (id != null && id.parentTile == tile)
+            {
+                Destroy(p.gameObject);
+                activeSpoiledFoods.RemoveAt(i);
+            }
+        }
     }
 }

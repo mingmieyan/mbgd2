@@ -61,6 +61,8 @@ public class PlayerRunner : MonoBehaviour
     [Header("Slide Settings")]
     public float slideResetDuration = 0.5f; // 调整为0.5~1秒比较自然
 
+    private bool isDead = false;
+
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();
@@ -89,6 +91,8 @@ public class PlayerRunner : MonoBehaviour
 
     void Update()
     {
+        if (isDead) return; // 死亡就不处理输入和动画状态
+
         if (forwardSpeed < maxForwardSpeed)
             forwardSpeed += acceleration * Time.deltaTime;
 
@@ -149,6 +153,7 @@ public class PlayerRunner : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDead) return; // 死亡就不再移动
         // 前进
         Vector3 forwardMove = Vector3.forward * forwardSpeed * Time.fixedDeltaTime;
 
@@ -296,16 +301,58 @@ public class PlayerRunner : MonoBehaviour
 
     public void Die()
     {
+        if (isDead) return;   // 避免重复调用
+        isDead = true;
+
+        // 停止 buff 协程
+        if (jumpBoostCoroutine != null) StopCoroutine(jumpBoostCoroutine);
+        if (speedBoostCoroutine != null) StopCoroutine(speedBoostCoroutine);
+
+        // 清除物理运动
+        if (rb != null)
+        {
+            rb.linearVelocity  = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
         if (animator != null)
-            animator.SetTrigger("Die"); //  播放死亡动画
+            animator.SetTrigger("Die");
 
         Debug.Log("Player died!");
-        gameObject.SetActive(false);
 
-        // 通知 GameManager 处理统一的 Game Over
+        // 用协程等待动画结束再调用 GameOver
+        StartCoroutine(DeathSequence());
+    }
+
+    private IEnumerator DeathSequence()
+    {
+        // 等一帧让动画切换
+        yield return null;
+
+        float timeout = 5f;
+        float timer = 0f;
+
+        // 等待进入 Die 动画
+        while (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Die") && timer < timeout)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // 等待动画播完
+        if (animator != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+        {
+            while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f && timer < timeout)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        // 最后触发 GameOver
         GameManager gm = FindFirstObjectByType<GameManager>();
         if (gm != null)
-            gm.GameOver(); // 统一处理结算和 UI
+            gm.GameOver();
     }
 
 

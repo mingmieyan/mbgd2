@@ -62,6 +62,10 @@ public class GameManager : MonoBehaviour
 
     public PickupManager pickupManager;//apply Other code
 
+    [Tooltip("苹果预制体")]
+    public Transform apple;
+    [Tooltip("苹果生成概率 (0-1)")]
+    [Range(0f, 1f)] public float appleChance = 0.3f;
 
     // 存放生成出来的 tile
     private List<Transform> spawnedTiles = new List<Transform>();
@@ -152,6 +156,7 @@ public class GameManager : MonoBehaviour
     }
     public void SpawnNextTile(bool spawnObstacles = true)
     {
+
         var newTile = Instantiate(tile, nextTileLocation,
         nextTileRotation);
         spawnedTiles.Add(newTile);
@@ -178,7 +183,7 @@ public class GameManager : MonoBehaviour
                 pickupSpawnPoints.Add(child);
         }
 
-        pickupManager.SpawnPickups(pickupSpawnPoints);
+        pickupManager.SpawnPickups(pickupSpawnPoints, newTile);
 
         // 假设 pickupManager 已经挂在场景里
         // 每个 Tile 的变质食物生成点列表
@@ -190,7 +195,7 @@ public class GameManager : MonoBehaviour
         }
 
         // 调用生成
-        pickupManager.SpawnSpoiledFood(spoiledFoodPoints);
+        pickupManager.SpawnSpoiledFood(spoiledFoodPoints, newTile);
     }
     private void TrySpawnObjects(Transform newTile)
     {
@@ -204,7 +209,7 @@ public class GameManager : MonoBehaviour
         if (spawnPoints.Count == 0) return;
 
         // 随机选一个点来放障碍物
-     
+
         Transform obstaclePoint = null;
 
         if (Random.value < obstacleChance && obstacle != null)
@@ -212,20 +217,34 @@ public class GameManager : MonoBehaviour
             obstaclePoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
             var newObstacle = Instantiate(obstacle, obstaclePoint.position, Quaternion.identity);
             newObstacle.SetParent(obstaclePoint);
-         
+
         }
 
-        // 其他点可以放卷心菜
+        // 2. 其他点放蔬菜（卷心菜/苹果）
         foreach (var spawnPoint in spawnPoints)
         {
             // 跳过障碍物点
             if (spawnPoint == obstaclePoint) continue;
 
-            if (Random.value < cabbageChance && cabbage != null)
+            float roll = Random.value;
+
+            if (roll < cabbageChance) // 卷心菜
             {
-                var newCabbage = Instantiate(cabbage, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
-                newCabbage.SetParent(spawnPoint);
+                if (cabbage != null)
+                {
+                    var newCabbage = Instantiate(cabbage, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
+                    newCabbage.SetParent(spawnPoint);
+                }
             }
+            else if (roll < cabbageChance + appleChance) // 苹果
+            {
+                if (apple != null)
+                {
+                    var newApple = Instantiate(apple, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
+                    newApple.SetParent(spawnPoint);
+                }
+            }
+            // roll >= cabbageChance + appleChance → 什么都不生成
         }
     }
     /// <summary>
@@ -233,14 +252,19 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void RecycleOldestTile()
     {
-        if (spawnedTiles.Count > initSpawnNum) // 超过初始数量就回收
+        if (spawnedTiles.Count > initSpawnNum)
         {
             var oldTile = spawnedTiles[0];
             spawnedTiles.RemoveAt(0);
-            pickupManager.ClearPickups();
+
+            // 只清理属于 oldTile 的道具
+            if (pickupManager != null)
+                pickupManager.ClearPickupsForTile(oldTile);
+
             Destroy(oldTile.gameObject);
         }
     }
+
 
 
     private void UpdateTimerUI()

@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 2111990557548970268}
   - component: {fileID: 3174113885071522926}
   - component: {fileID: 223775149510874190}
+  - component: {fileID: -5179175894565126873}
   m_Layer: 0
   m_Name: Heal
   m_TagString: Untagged
@@ -259,3 +260,16 @@ MonoBehaviour:
   rotationSpeed: {x: 0, y: 30, z: 0}
   scaleAmplitude: 0.1
   scaleFrequency: 2
+--- !u!114 &-5179175894565126873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8413584992457202777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6849d93b372b6542819cf519034e6a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentTile: {fileID: 4773796408614047416, guid: 3c2a4e4dbb56ccd408fd3405a7e4ce8b, type: 3}
