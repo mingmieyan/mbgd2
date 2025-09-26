@@ -322,6 +322,8 @@ public class PlayerRunner : MonoBehaviour
 
         // 用协程等待动画结束再调用 GameOver
         StartCoroutine(DeathSequence());
+
+
     }
 
     private IEnumerator DeathSequence()
@@ -352,7 +354,7 @@ public class PlayerRunner : MonoBehaviour
         // 最后触发 GameOver
         GameManager gm = FindFirstObjectByType<GameManager>();
         if (gm != null)
-            gm.GameOver();
+            gm.GameOver(false); // 失败
     }
 
 

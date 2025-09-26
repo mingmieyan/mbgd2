@@ -11,17 +11,17 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [Tooltip("A reference to the tile we want to spawn")]
- public Transform tile;
+    public Transform tile;
 
     [Tooltip("Where the first tile should be placed at")]
- public Vector3 startPoint = new Vector3(0, 0, -5);
-    
+    public Vector3 startPoint = new Vector3(0, 0, -5);
+
     [Tooltip("How many tiles should we create in advance")]
- [Range(1, 15)]
+    [Range(1, 15)]
 
     public int initSpawnNum = 10;
     [Tooltip("How many tiles to spawn with noobstacles")]
-     public int initNoObstacles = 4;
+    public int initNoObstacles = 4;
 
     [Header("Spawn Settings")]
     [Tooltip("障碍物预制体")]
@@ -39,15 +39,19 @@ public class GameManager : MonoBehaviour
     [Tooltip("卷心菜和障碍物的最小间距")]
     public float minDistance = 3f;
 
-    [Header("Game Timer")]
-    public float levelTime = 60f; // 倒计时 (秒)
+    
 
     [Header("UI References")]
     public Text timerText;          // 倒计时 UI
     public Text scoreText;          // 当前分数 UI
     public Text gameOverScoreText;  // GameOver 菜单显示当前分数
-    public Text gameOverHighScoreText; // GameOver 菜单显示最高分
+    public Text gameOverHighScoreText; // 显示最高分
     public GameObject gameOverMenu; // GameOver 菜单
+
+    public GameObject gameLostMenu;   // 失败 Canvas
+    public Text gameLostScoreText;      // 失败 Canvas 显示当前分数
+
+
 
     [Header("Game Settings")]
     public float totalTime = 60f;   // 游戏时长
@@ -67,6 +71,7 @@ public class GameManager : MonoBehaviour
     [Tooltip("苹果生成概率 (0-1)")]
     [Range(0f, 1f)] public float appleChance = 0.3f;
 
+
     // 存放生成出来的 tile
     private List<Transform> spawnedTiles = new List<Transform>();
     /// <summary>
@@ -79,13 +84,13 @@ public class GameManager : MonoBehaviour
     private Quaternion nextTileRotation;
 
     public int Score;
-    
+
 
     /// <summary>
     /// Start is called before the first frame update
     /// </summary>
-      private Transform player;
-     void Start()
+    private Transform player;
+    void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
@@ -129,18 +134,17 @@ public class GameManager : MonoBehaviour
         if (!isEndlessMode)
         {
             // 正常倒计时逻辑
-            if (levelTime > 0f)
+            if (remainingTime > 0f)
             {
-                levelTime -= Time.deltaTime;
-                if (levelTime < 0f) levelTime = 0f;
+                remainingTime -= Time.deltaTime;
+                if (remainingTime < 0f) remainingTime = 0f;
                 UpdateTimerUI();
             }
 
-            remainingTime -= Time.deltaTime;
             if (remainingTime <= 0)
             {
                 remainingTime = 0;
-                GameOver();
+                GameOver(true); // 通关
             }
         }
 
@@ -294,23 +298,22 @@ public class GameManager : MonoBehaviour
     }
 
     private int finalScore = 0;
-    public void GameOver()
+    public void GameOver(bool isWin)
     {
-        if (isGameOver) return; // 防止重复调用
+        if (isGameOver) return;
         isGameOver = true;
-        // 保存最终分数
-        finalScore = ScoreManager.Instance?.GetScore() ?? score;
 
-        // 停止游戏
+        finalScore = ScoreManager.Instance?.GetScore() ?? score;
         Time.timeScale = 0f;
 
-        // 显示 GameOver 菜单
-        if (gameOverMenu != null)
+        if (isWin && gameOverMenu != null)
         {
             gameOverMenu.SetActive(true);
-            gameOverScoreText.text = finalScore.ToString();
 
-            // 检查最高分
+            // 更新分数 & 最高分
+            if (gameOverScoreText != null)
+                gameOverScoreText.text = finalScore.ToString();
+
             int highScore = PlayerPrefs.GetInt("HighScore", 0);
             if (finalScore > highScore)
             {
@@ -319,9 +322,19 @@ public class GameManager : MonoBehaviour
                 PlayerPrefs.Save();
             }
 
-            gameOverHighScoreText.text =  highScore.ToString();
+            if (gameOverHighScoreText != null)
+                gameOverHighScoreText.text = highScore.ToString();
+        }
+        else if (!isWin && gameLostMenu != null)
+        {
+            gameLostMenu.SetActive(true);
+
+            // 只更新分数，不管最高分
+            if (gameLostScoreText != null)
+                gameLostScoreText.text = finalScore.ToString();
         }
     }
+
 
     // 重开按钮调用
     public void RestartGame()
