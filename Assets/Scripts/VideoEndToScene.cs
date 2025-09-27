@@ -10,10 +10,15 @@ public class VideoEndToScene : MonoBehaviour
     [Tooltip("播放完后切换到的场景名")]
     public string nextSceneName = "Level1";
 
+
+
     void Start()
     {
         if (videoPlayer == null)
             videoPlayer = GetComponent<VideoPlayer>();
+
+       
+
 
         if (videoPlayer != null)
         {

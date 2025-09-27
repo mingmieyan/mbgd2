@@ -3462,6 +3462,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Basic Tile
       objectReference: {fileID: 0}
+    - target: {fileID: 2046345156541228497, guid: 3c2a4e4dbb56ccd408fd3405a7e4ce8b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4773796408614047416, guid: 3c2a4e4dbb56ccd408fd3405a7e4ce8b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5212,7 +5216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bca3794a82dfba4191d43ce3bf0e25a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tile: {fileID: 4773796408614047416, guid: 1b53f520bcf0cd548b56ddf35f039ab0, type: 3}
+  tile: {fileID: 1842176870958282519, guid: 7763138d6be8c92469945f523678ede5, type: 3}
   startPoint: {x: 0, y: 0, z: -5}
   initSpawnNum: 15
   initNoObstacles: 1
