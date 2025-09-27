@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Prefabs/Scenes/Level 2.unity
     guid: 254abc45670068a4183b6caddb4ad0eb
   - enabled: 1
+    path: Assets/Prefabs/Scenes/Level 3.unity
+    guid: 27bd2fd2d3503d5499666e65f51f3734
+  - enabled: 1
     path: Assets/Prefabs/Scenes/Endless Level.unity
     guid: cadb9112b7bc5ba498bbe0b5638bc63f
   m_configObjects:
